@@ -1,7 +1,11 @@
 #include <iostream>
 #include <sstream>
 #include <stdlib.h>
-#include <string>
+#include <string.h>
+#include <stdio.h>
+
+#include "Student.h"
+#include "Grades.h"
 
 using namespace std;
 
@@ -11,11 +15,13 @@ void addGrades(int id, string course, string grade);
 void delStudents(int id);
 void delGrades(int id, string course);
 void disp(bool flag);
-void dispGrades();
 void error(string s);
 
 //this is where i will store the string tokens
 string strarray[10];
+
+Grades gradearray[128];
+Student studentarray[128];
 
 int main()
 {
@@ -129,35 +135,97 @@ void runPrompt()
 
 void disp(bool flag)
 {
+	int i;
+	
 	if(flag)
 	{
 		//display students
+		for(i = 0; i < 128; i++)
+		{
+			if(flag)
+			{
+				studentarray[i].printInfo();
+				
+				if(studentarray[i+1].getID() != 0)
+				{
+					cout << ",";
+				}
+			}
+			
+			else
+			{
+				gradearray[i].printGrades();
+				
+				if(gradearray[i+1].getID() != 0)
+				{
+					cout << ",";
+				}
+			}	
+		}
 	}
 	
 	else
 	{
-		//display grades
+		cout << "empty table\n";
 	}
 }
 
 void addStudents(int id, string fname, string lname)
 {
 	//add the students
+	int i;
+	
+	for(i = 0; i < 128; i++)
+	{
+		if(studentarray[i].getID() == 0)
+		{
+			studentarray[i].setInfo(id, fname, lname);
+			break;
+		}
+	}
 }
 
-void addGrades(int it, string course, string grade)
+void addGrades(int id, string course, string grade)
 {
 	//add the grades
+	int i;
+	for(i = 0; i < 128; i++)
+	{
+		if(gradearray[i].getID() == 0)
+		{
+			gradearray[i].setData(id, course, grade);
+			break;
+		}
+	}
 }
 
 void delGrades(int id, string course)
 {
 	//delete the grade
+	int i;
+	
+	for(i = 0; i < 128; i++)
+	{
+		if(gradearray[i].getID() == id && strcmp(gradearray[i].getCourse(), course) == 0)
+		{
+			gradearray[i].setData(0, "", "");
+			break;
+		}
+	}
 }
 
 void delStudents(int id)
 {
 	//delete the student
+	int i;
+	
+	for(i = 0; i < 128; i++)
+	{
+		if(studentarray[i].getID() == id)
+		{
+			studentarray[i].setInfo(0, "", "");
+		}
+	}
 }
 void error(string input)
 {
