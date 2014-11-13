@@ -1,4 +1,4 @@
-#include <string>
+#include <string.h>
 
 using namespace std;
 
@@ -6,15 +6,17 @@ class Student
 {
     public:
         Student();
-        void setInfo(int, string, string);
+        void setInfo(int newid, string f, string l);
         void printInfo();
-        void setDel(bool);
-        bool isDel();
+        void setValid(bool);
+        bool isValid();
         int getID();
+        string getFname();
+        string getLname();
 
     private:
         int id;
-        bool isValid;
+        bool valid;
         string fname;
         string lname;
 };

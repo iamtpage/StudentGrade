@@ -32,12 +32,6 @@ void runPrompt()
 {
 	string input = "";
 	int index;
-	
-	//to make sure the first argument given is "students" or "grades"
-	bool firstarg = true;
-	
-	//flag for letting us know if they typed students (true) or grades (false)
-	bool sorg = false;
 
 	while(input != "quit")
 	{
@@ -49,86 +43,93 @@ void runPrompt()
 
 		while(iss)
 		{
-			//gather strings delimited by ' ' and store in array
+				//gather strings delimited by ' ' and store in array
 			//index starts at 0, so increment after
 			iss >> strarray[index];
 			index++;
 		}
-
-		if(input.find("add") != string::npos && !firstarg)
+		
+		if(strarray[1] == "add")
 		{
 			//strarray[] = students|grades add (id) (fname)|(course) (lname)|(grade)
 			
-			int sid = atoi(strarray[2].c_str());
-			
-			if(sorg) //students
+			if(strarray[2] != "" && strarray[3] != "" && strarray[4] != "" && strarray[6] == "")
 			{
 				
-				addStudents(sid, strarray[3], strarray[4]);
+				if(strarray[0] == "grades")
+				{
+					int sid = atoi(strarray[2].c_str());
+					addGrades(sid, strarray[3], strarray[4]);
+				}
+			
+				if(strarray[0] == "students")
+				{
+					int sid = atoi(strarray[2].c_str());
+					addStudents(sid, strarray[3], strarray[4]);
+				}
+				
+				else
+				{
+					cout << "Erorr! Invalid Format.\n";
+				}
 			}
 			
-			if(!sorg)
+			else
 			{
-				addGrades(sid, strarray[3], strarray[4]);
+				cout << "Error! Wrong format.\n";
 			}
-		}
-		
-		if(input.find("students") != string::npos && firstarg)
-		{
-			//they typed students
-			sorg = true;
-			
-			//no longer the first argument
-			firstarg = false;
-		}
-		
-		if(input.find("grades") != string::npos && firstarg)
-		{
-			//they typed grades
-			sorg = false;
-			
-			//no longer the first argument
-			firstarg = false;
 		}
 
-		if(input.find("delete") != string::npos && !firstarg)
+		//if(input.find("delete") != string::npos && !firstarg)
+		if(strarray[1] == "delete")
 		{
 			//strarray[] = grades delete (id) (course)
 			//strarray[] = students delete (id)
 			
 			int sid = atoi(strarray[2].c_str());
 			
-			if(sorg) //students
-			{
-				
+			if(strarray[0] == "students") //students
+			{	
 				delStudents(sid);
 			}
 			
-			if(!sorg)
+			if(strarray[0] == "grades")
 			{
 				delGrades(sid, strarray[3]);
 			}
 		}
 
 
-		if(input.find("display") != string::npos && !firstarg)
+		//if(input.find("display") != string::npos && input.find("students") != string::npos)
+		if(strarray[1] == "display")
 		{
-			//display(true) will display students
-			//display(false) will display grades
+			//strarray[] = students|grades add (id) (fname)|(course) (lname)|(grade)
+			if(strarray[0] == "students")
+			{
+				disp(true);
+			}
 			
-			disp(sorg);
+			if(strarray[0] == "grades")
+			{
+				disp(false);
+			}
 		}
-
-		if(input.find("quit") != string::npos)
+		
+		//if(input.find("quit") != string::npos)
+		if(strarray[0] == "quit")
         {
 			break;
 		}
-
-		if(input.find("quit") == string::npos && input.find("display") == string::npos
-                && input.find("delete") == string::npos && input.find("add") == string::npos
-                && firstarg)
+		
+        if(strarray[0] != "quit" && strarray[0] != "students" && strarray[0] != "grades")
 		{
 			error(input);
+		}
+
+		int x;
+		for(x = 0; x < 10; x++)
+		{
+			strarray[x] = "";
 		}
 	}
 }
@@ -136,50 +137,76 @@ void runPrompt()
 void disp(bool flag)
 {
 	int i;
+	bool empty = true;
 	
-	if(flag)
+	//display students
+	for(i = 0; i < 128; i++)
 	{
-		//display students
-		for(i = 0; i < 128; i++)
+		if(flag && studentarray[i].isValid() && studentarray[i].getID() != -1) //students
 		{
-			if(flag)
-			{
-				studentarray[i].printInfo();
+			empty = false;
+			studentarray[i].printInfo();
 				
-				if(studentarray[i+1].getID() != 0)
-				{
-					cout << ",";
-				}
+			if(studentarray[i+1].isValid())
+			{
+				cout << ",";
 			}
-			
-			else
-			{
-				gradearray[i].printGrades();
-				
-				if(gradearray[i+1].getID() != 0)
-				{
-					cout << ",";
-				}
-			}	
 		}
+		
+		if(!flag && gradearray[i].isValid() && gradearray[i].getID() !=-1) //grades
+		{
+			empty = false;
+			gradearray[i].printGrades();
+			
+			if(gradearray[i+1].isValid())
+			{
+					cout << ",";
+			}
+		}
+		
 	}
 	
-	else
+	
+	if(empty)
 	{
-		cout << "empty table\n";
+		cout << "empty table";
 	}
+	
+	cout << endl;		
 }
 
 void addStudents(int id, string fname, string lname)
 {
 	//add the students
 	int i;
+	bool dupeflag = false;
 	
 	for(i = 0; i < 128; i++)
 	{
-		if(studentarray[i].getID() == 0)
+		if(studentarray[i].getID() == id)
+		{
+			dupeflag = true;
+			break;
+		}
+		
+		if(studentarray[i].getFname() == fname && studentarray[i].getLname() == lname)
+		{
+			dupeflag = true;
+			break;
+		}
+	}
+	
+	if(dupeflag)
+	{
+		cout << "Error, duplicate entry!\n";
+	}
+	
+	for(i = 0; i < 128; i++)
+	{
+		if(!studentarray[i].isValid() && !dupeflag)
 		{
 			studentarray[i].setInfo(id, fname, lname);
+			studentarray[i].setValid(true);
 			break;
 		}
 	}
@@ -189,11 +216,13 @@ void addGrades(int id, string course, string grade)
 {
 	//add the grades
 	int i;
+	
 	for(i = 0; i < 128; i++)
 	{
-		if(gradearray[i].getID() == 0)
+		if(!gradearray[i].isValid())
 		{
 			gradearray[i].setData(id, course, grade);
+			gradearray[i].setValid(true);
 			break;
 		}
 	}
@@ -206,9 +235,9 @@ void delGrades(int id, string course)
 	
 	for(i = 0; i < 128; i++)
 	{
-		if(gradearray[i].getID() == id && strcmp(gradearray[i].getCourse(), course) == 0)
+		if(gradearray[i].getID() == id && gradearray[i].getCourse().compare(course) == 0)
 		{
-			gradearray[i].setData(0, "", "");
+			gradearray[i].setValid(false);
 			break;
 		}
 	}
@@ -223,8 +252,20 @@ void delStudents(int id)
 	{
 		if(studentarray[i].getID() == id)
 		{
-			studentarray[i].setInfo(0, "", "");
+			studentarray[i].setValid(false);
+			break;
 		}
+		
+	}
+	
+	//also delete corresponding grades
+	for(i = 0; i < 128; i++)
+	{
+		if(gradearray[i].getID() == id)
+		{
+			gradearray[i].setValid(false);
+		}
+		
 	}
 }
 void error(string input)

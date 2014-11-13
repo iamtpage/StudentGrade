@@ -5,10 +5,10 @@ using namespace std;
 
 Grades::Grades()
 {
-	id = 0;
+	id = -1;
 	course = "";
 	grade = "";
-	isValid = true;
+	valid = false;
 }
 
 void Grades::setData(int newid, string newcourse, string newgrade)
@@ -16,21 +16,25 @@ void Grades::setData(int newid, string newcourse, string newgrade)
 	id = newid;
 	course = newcourse;
 	grade = newgrade;
+	valid = true;
 }
 
 void Grades::printGrades()
 {
-	cout << "(" << id << ", " << course << ", " << grade << ")";
+	if(id != -1 && valid)
+	{
+		cout << "(" << id << ", " << course << ", " << grade << ")";
+	}
 }
 
-void Grades::setDel(bool flag)
+void Grades::setValid(bool flag)
 {
-	isValid = flag;
+	valid = flag;
 }
 
-bool Grades::isDel()
+bool Grades::isValid()
 {
-	return isValid;
+	return valid;
 }
 
 int Grades::getID()

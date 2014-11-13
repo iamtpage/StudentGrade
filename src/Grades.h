@@ -8,14 +8,14 @@ class Grades
         Grades();
         void setData(int, string, string);
         void printGrades();
-        void setDel(bool);
-        bool isDel();
+        void setValid(bool);
+        bool isValid();
         int getID();
         string getCourse();
 
     private:
         int id;
-        bool isValid;
+        bool valid;
         string course;
         string grade;
 };
