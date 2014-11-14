@@ -43,7 +43,7 @@ void runPrompt()
 
 		while(iss)
 		{
-				//gather strings delimited by ' ' and store in array
+			//gather strings delimited by ' ' and store in array
 			//index starts at 0, so increment after
 			iss >> strarray[index];
 			index++;
@@ -126,6 +126,8 @@ void runPrompt()
 			error(input);
 		}
 
+		//the strarray doesn't get reset, just overwritten
+		//so in order to ensure data doesn't leak, we overwrite it ourselves
 		int x;
 		for(x = 0; x < 10; x++)
 		{
@@ -142,8 +144,10 @@ void disp(bool flag)
 	//display students
 	for(i = 0; i < 128; i++)
 	{
+		//flag = true means it is students
 		if(flag && studentarray[i].isValid() && studentarray[i].getID() != -1) //students
 		{
+			//at least one student exists, so it isn't empty
 			empty = false;
 			studentarray[i].printInfo();
 				
@@ -153,8 +157,10 @@ void disp(bool flag)
 			}
 		}
 		
+		//flag = false means grades
 		if(!flag && gradearray[i].isValid() && gradearray[i].getID() !=-1) //grades
 		{
+			//at least one grade exists, so it isn't empty
 			empty = false;
 			gradearray[i].printGrades();
 			
@@ -166,7 +172,8 @@ void disp(bool flag)
 		
 	}
 	
-	
+	//if empty flag hasn't been set to false
+	//it is an empty table
 	if(empty)
 	{
 		cout << "empty table";
@@ -183,12 +190,14 @@ void addStudents(int id, string fname, string lname)
 	
 	for(i = 0; i < 128; i++)
 	{
+		//check for a duplicate ID
 		if(studentarray[i].getID() == id)
 		{
 			dupeflag = true;
 			break;
 		}
 		
+		//check for a duplicate first name and last name
 		if(studentarray[i].getFname() == fname && studentarray[i].getLname() == lname)
 		{
 			dupeflag = true;
@@ -196,6 +205,7 @@ void addStudents(int id, string fname, string lname)
 		}
 	}
 	
+	//only triggers if we have a duplicate
 	if(dupeflag)
 	{
 		cout << "Error, duplicate entry!\n";
@@ -203,8 +213,10 @@ void addStudents(int id, string fname, string lname)
 	
 	for(i = 0; i < 128; i++)
 	{
+		//if the student index is not valid (empty) and no duplicated detected
 		if(!studentarray[i].isValid() && !dupeflag)
 		{
+			//set the info, and toggle it as valid
 			studentarray[i].setInfo(id, fname, lname);
 			studentarray[i].setValid(true);
 			break;
@@ -216,11 +228,23 @@ void addGrades(int id, string course, string grade)
 {
 	//add the grades
 	int i;
+	bool dupe = false;
 	
 	for(i = 0; i < 128; i++)
 	{
-		if(!gradearray[i].isValid())
+		if(gradearray[i].getID = id || gradearray[i].getCourse == course) //student already has a grade
 		{
+			dupe = true;
+			break;
+		}
+	}
+	
+	for(i = 0; i < 128; i++)
+	{
+		//empty spot and not a dupe
+		if(!gradearray[i].isValid() && !dupe)
+		{
+			//add and set valid
 			gradearray[i].setData(id, course, grade);
 			gradearray[i].setValid(true);
 			break;
@@ -235,9 +259,12 @@ void delGrades(int id, string course)
 	
 	for(i = 0; i < 128; i++)
 	{
-		if(gradearray[i].getID() == id && gradearray[i].getCourse().compare(course) == 0)
+		//found a match
+		if(gradearray[i].getID() == id && gradearray[i].getCourse() == course)
 		{
+			//set the grade as invalid and delete the info
 			gradearray[i].setValid(false);
+			gradearray[i].setData(-1, "","");
 			break;
 		}
 	}
@@ -248,11 +275,14 @@ void delStudents(int id)
 	//delete the student
 	int i;
 	
+	//delete instance of student id
 	for(i = 0; i < 128; i++)
 	{
 		if(studentarray[i].getID() == id)
 		{
+			//set as invalid and remove info
 			studentarray[i].setValid(false);
+			studentarray[i].setInfo(-1, "", "");
 			break;
 		}
 		
@@ -261,9 +291,13 @@ void delStudents(int id)
 	//also delete corresponding grades
 	for(i = 0; i < 128; i++)
 	{
+		
 		if(gradearray[i].getID() == id)
 		{
 			gradearray[i].setValid(false);
+			gradearray[i].setData(-1, "", "");
+			//we don't break because the student might have more
+			//than one class in the gradearray
 		}
 		
 	}

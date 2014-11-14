@@ -3,6 +3,9 @@
 
 using namespace std;
 
+//this is pretty much a copy of the Student class
+//just changed for grades
+
 Grades::Grades()
 {
 	id = -1;

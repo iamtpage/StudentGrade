@@ -7,6 +7,7 @@ using namespace std;
 
 Student::Student()
 {
+	//initialize the variables
 	id = -1;
 	fname = "";
 	lname = "";
@@ -15,6 +16,7 @@ Student::Student()
 
 void Student::setInfo(int newid, string f, string l)
 {
+	//set the information given by parameters
 	id = newid;
 	fname = f;
 	lname = l;
@@ -23,6 +25,7 @@ void Student::setInfo(int newid, string f, string l)
 
 void Student::printInfo()
 {
+	//cases when we should print it out
 	if(id != -1 && valid)
 	{
 		cout << "(" << id << ", " << fname << ", " << lname << ")";
@@ -31,11 +34,13 @@ void Student::printInfo()
 
 void Student::setValid(bool flag)
 {
+	//option to toggle if this spot in the array is valid
 	valid = flag;
 }
 
 bool Student::isValid()
 {
+	//returns if the index is valid
 	return valid;
 }
 
