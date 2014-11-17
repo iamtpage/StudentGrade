@@ -232,7 +232,7 @@ void addGrades(int id, string course, string grade)
 	
 	for(i = 0; i < 128; i++)
 	{
-		if(gradearray[i].getID = id || gradearray[i].getCourse == course) //student already has a grade
+		if(gradearray[i].getID() == id || gradearray[i].getCourse() == course) //student already has a grade
 		{
 			dupe = true;
 			break;
